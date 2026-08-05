@@ -67,12 +67,28 @@ class VectorStoreManager:
             seen_contents = set()
             combined_docs = []
 
-            # Interleave results to balance semantic and keyword matches evenly
-            for doc in sorted(list(set(faiss_results + bm25_results)), key=lambda x: x.page_content):
-                # Unique identifier based on row text contents
+            for doc in faiss_results + bm25_results:
                 if doc.page_content not in seen_contents:
                     seen_contents.add(doc.page_content)
                     combined_docs.append(doc)
+
+            # Extract basic query terms (ignoring stop words) to verify minimum keyword presence
+            query_terms = [word.lower() for word in query.split() if len(word)>2]
+
+            # Check if at least one meaningful query term or identifier exists in the context
+            has_relevant_content = any(
+                any(term in doc.page_content.lower() for term in query_terms) for doc in combined_docs
+            )
+
+            # Interleave results to balance semantic and keyword matches evenly
+            # for doc in sorted(list(set(faiss_results + bm25_results)), key=lambda x: x.page_content):
+            #     # Unique identifier based on row text contents
+            #     if doc.page_content not in seen_contents:
+            #         seen_contents.add(doc.page_content)
+            #         combined_docs.append(doc)
+
+            if not has_relevant_content:
+                return []
 
             return combined_docs
 
