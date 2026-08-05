@@ -15,8 +15,19 @@ st.caption("Grounded AI Q&A Engine powered by project Knowledge Base")
 def initialize_rag_backend():
     return RAGEngine()
 
+# Cache the RAG engine initialization in memory across app reruns
+@st.cache_resource(show_spinner="Initializing RAG Engine & Loading Indexes...")
+
+def load_rag_engine()->RAGEngine:
+    """
+        Instantiates the RAG engine once and persists it in memory.
+        Prevents costly index reloading on every user chat interaction.
+    """
+    return RAGEngine()
+
 try:
-    engine = initialize_rag_backend()
+    #engine = initialize_rag_backend()
+    engine = load_rag_engine()
     chain = engine.get_chain()
 except Exception as e:
     st.error(f"Failed to initialize backend engine. Ensure FAISS index exist. Error {e}")

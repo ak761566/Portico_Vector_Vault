@@ -1,24 +1,49 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from typing import Optional
 from langchain_community.llms.ollama import Ollama
 from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_groq import ChatGroq
 from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
+from openai import api_key
 
 env_path = Path(".")/".env"
 load_dotenv(dotenv_path=env_path)
 
 class LLMFactory:
     @staticmethod
-    def get_llm() -> BaseChatModel:
+    def get_llm(provider: str = 'groq', model_name: Optional[str]=None, temperature: float =0.0) -> BaseChatModel:
         """
             Dynamically provisions an LLM client based on environment configurations.
             Returns a unified BaseChatModel object to ensure strict interface compatibility.
         """
-        provider = os.getenv("LLM_PROVIDER", "local").strip().lower()
+        #provider = os.getenv("LLM_PROVIDER", "local").strip().lower()
 
-        if provider == "local":
+        if provider.lower() == 'groq':
+            api_key = os.getenv("GROQ_API_KEY")
+            # Pythonic secret resolution order: Environment Var -> Streamlit Secret -> Fail
+
+            if not api_key:
+                try:
+                    import streamlit as st
+                    api_key = st.secrets.get("GROQ_API_KEY")
+                except ImportError:
+                    pass
+
+            if not api_key:
+                raise ValueError("Missing 'GROQ API KEY'. Please define it in your environment or .env file.")
+            selected_model = model_name or "llama-3.3-70b-versatile"
+            print(f"Initialize Cloud LLM via GROQ API [{selected_model}]...")
+
+            return ChatGroq(
+                groq_api_key=api_key,
+                model_name=selected_model,
+                temperature=temperature
+            )
+
+        elif provider == "local":
             print("LLM Factory: Initializing local gemma3 via ollama....")
             return ChatOllama(
                 model="gemma3:4b",
