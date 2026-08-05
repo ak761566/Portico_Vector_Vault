@@ -11,9 +11,9 @@ st.caption("Grounded AI Q&A Engine powered by project Knowledge Base")
 
 # 2. Lazy-load the backend engine using cache parameters
 # This ensures we only load the LLM and FAISS files ONCE, not on every keystroke.
-@st.cache_resource
-def initialize_rag_backend():
-    return RAGEngine()
+# @st.cache_resource
+# def initialize_rag_backend():
+#     return RAGEngine()
 
 # Cache the RAG engine initialization in memory across app reruns
 @st.cache_resource(show_spinner="Initializing RAG Engine & Loading Indexes...")
