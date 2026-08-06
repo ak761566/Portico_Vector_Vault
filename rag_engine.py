@@ -1,10 +1,13 @@
 from typing import Dict, Any, List
+from pathlib import Path
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.runnables import RunnablePassthrough, RunnableBranch
+from langchain_core.runnables import RunnableLambda
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.messages import AIMessage, HumanMessage
 from sqlalchemy.orm import joinedload
 from operator import itemgetter
+from ingestion import DocumentProcessor
+
 from llm_factory import LLMFactory
 from vector_store import VectorStoreManager
 
@@ -17,7 +20,10 @@ class RAGEngine:
         # 1. Initialize our components
         self.llm = LLMFactory.get_llm()
         self.vector_manager = VectorStoreManager()
-        self.retriever = self.vector_manager.get_retriever(search_k=20)
+        self.processor = DocumentProcessor()
+        self.raw_docs = self.processor.process_directory(Path("./source_docs"))
+        self.retriever = self.vector_manager.get_hybrid_retriever(self.raw_docs, vector_k=15, bm25_k=15)
+        #self.retriever = self.vector_manager.get_retriever(search_k=20)
 
         # 2. Build the history-aware query re-writer prompt
         # This transforms conversational follow-ups into sharp standalone questions
@@ -70,10 +76,12 @@ class RAGEngine:
         def get_standalone_question(input_dict: dict)->str:
             if input_dict.get("chat_history"):
                 return self.question_generator.invoke(input_dict)
-            return input_dict.get("questions","")
+            return input_dict.get("question","")
+
+        standalone_question_runnable = RunnableLambda(get_standalone_question)
 
         retrieval_chain = {
-            "context" : get_standalone_question | self.retriever | self._format_docs,
+            "context" : standalone_question_runnable | self.retriever | self._format_docs,
             "chat_history" : itemgetter("chat_history"),
             "question" : get_standalone_question
         }

@@ -35,7 +35,7 @@ class LLMFactory:
             if not api_key:
                 raise ValueError("Missing 'GROQ API KEY'. Please define it in your environment or .env file.")
             selected_model = model_name or "llama-3.3-70b-versatile"
-            print(f"Initialize Cloud LLM via GROQ API [{selected_model}]...")
+            print(f"LLM Factory: Initialize Cloud LLM via GROQ API [{selected_model}]...")
 
             return ChatGroq(
                 groq_api_key=api_key,

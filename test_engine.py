@@ -11,12 +11,12 @@ if __name__ == "__main__":
     # Let's pretend the user already asked about a task, and the system responded
 
     mock_history = [
-        HumanMessage(content="What is the error message related to the error code C550?"),
-        AIMessage(content="It is related to the transformation file problem.")
+        HumanMessage(content="What are the core business of Ithaka?"),
+        AIMessage(content="It is related to content archival.")
     ]
 
     # Follow-up question referencing the past conversation turn ("its status")
-    follow_up=f"What is the error code? generate summary for this error code and include resolution steps associated with this error code"
+    follow_up=f"How they use Jira?"
 
     print(f"\n Test input: {follow_up}")
     print("processing and retrieving context....")

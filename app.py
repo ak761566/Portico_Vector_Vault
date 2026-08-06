@@ -5,8 +5,8 @@ from torchgen.packaged.autograd.context import with_native_function_with_differe
 from rag_engine import RAGEngine
 
 # 1. Page Configuration
-st.set_page_config(page_title="Ithaka (Portico) Project RAG Bot", page_icon="", layout="centered")
-st.title("Project Knowledge Base Assistant")
+st.set_page_config(page_title="Project Assistant", page_icon="", layout="centered")
+st.title("Ithaka (Portico) Project Assistant")
 st.caption("Grounded AI Q&A Engine powered by project Knowledge Base")
 
 # 2. Lazy-load the backend engine using cache parameters
@@ -48,7 +48,7 @@ for message in st.session_state.chat_history:
             st.markdown(message.content)
 
 # 5. Handle New User Interactions
-if user_query := st.chat_input("Ask a question about Project related errors"):
+if user_query := st.chat_input("Ask Ithaka (Portico) project related questions."):
     # Render user message on screen instantly
     with st.chat_message("user"):
         st.markdown(user_query)

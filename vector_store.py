@@ -1,13 +1,11 @@
 import os
 from pathlib import Path
-from typing import List
-
+from typing import List, Optional
+from langchain_core.runnables import Runnable, RunnableLambda, RunnableConfig
 from langchain_community.retrievers import BM25Retriever
-from langchain_community.tools.playwright.utils import run_async
 from langchain_core.documents import Document
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from langchain_classic.retrievers.ensemble import EnsembleRetriever
 
 class VectorStoreManager:
     def __init__(self, index_path: str = 'faiss_index', model_name : str = "sentence-transformers/all-MiniLM-L6-v2"):
@@ -16,9 +14,20 @@ class VectorStoreManager:
         Using 'all-MiniLM-L6-v2' because it is extremely lightweight (~90MB),
         fast on CPU, and performs well for search.
         """
-        self.index_path = index_path
+        self.index_path = Path(index_path)
+        # Check if the index folder exists; if not, build it on the fly!
+        if not self.index_path.exists():
+            print("Index not found: triggering automatic ingestion..")
+            self._bootstrap_index()
+
         print("Initializing local huggingface embedding engine....")
         self.embedding = HuggingFaceEmbeddings(model_name=model_name)
+
+    def _bootstrap_index(self):
+        from ingestion import DocumentProcessor
+        processor = DocumentProcessor()
+        docs = processor.process_directory(Path("./source_docs"))
+        self.build_and_save_index(docs)
 
     def build_and_save_index(self, docs: List[Document]) -> FAISS:
         if not docs:
@@ -51,7 +60,7 @@ class VectorStoreManager:
         if not Path(self.index_path):
             raise FileNotFoundError(f"Vector index path not found. Run build_and_save_index first.")
 
-        vector_db = FAISS.load_local( self.index_path, self.embedding, allow_dangerous_deserialization=True)
+        vector_db = FAISS.load_local(self.index_path, self.embedding, allow_dangerous_deserialization=True)
         faiss_retriever = vector_db.as_retriever(search_kwargs={"k":vector_k})
         bm25_retriever = BM25Retriever.from_documents(all_docs)
         bm25_retriever.k = bm25_k
@@ -80,12 +89,6 @@ class VectorStoreManager:
                 any(term in doc.page_content.lower() for term in query_terms) for doc in combined_docs
             )
 
-            # Interleave results to balance semantic and keyword matches evenly
-            # for doc in sorted(list(set(faiss_results + bm25_results)), key=lambda x: x.page_content):
-            #     # Unique identifier based on row text contents
-            #     if doc.page_content not in seen_contents:
-            #         seen_contents.add(doc.page_content)
-            #         combined_docs.append(doc)
 
             if not has_relevant_content:
                 return []
@@ -94,8 +97,8 @@ class VectorStoreManager:
 
             # 3. Create a clean wrapper class so it behaves exactly like a LangChain runnable component
 
-        class CustomHybridRetriever:
-            def invoke(self, query: str) -> List[Document]:
+        class CustomHybridRetriever(Runnable):
+            def invoke(self, query: str, config: Optional[RunnableConfig] = None) -> List[Document]:
                 return custom_ensemble_search(query)
 
         return CustomHybridRetriever()

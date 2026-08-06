@@ -4,7 +4,7 @@ from ingestion import DocumentProcessor
 
 if __name__ == "__main__":
     processor = DocumentProcessor()
-    doc_dir = Path("source_docs/Ithaka-Portico-KnowledgeBase.xlsx")
+    doc_dir = Path("./source_docs")
 
     chunks  = processor.process_directory(doc_dir)
 
