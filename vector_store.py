@@ -18,6 +18,7 @@ class VectorStoreManager:
         # Check if the index folder exists; if not, build it on the fly!
         if not self.index_path.exists():
             print("Index not found: triggering automatic ingestion..")
+            self.embedding = HuggingFaceEmbeddings(model_name=model_name)
             self._bootstrap_index()
 
         print("Initializing local huggingface embedding engine....")
@@ -90,7 +91,7 @@ class VectorStoreManager:
             )
 
 
-            if not has_relevant_content:
+            if not combined_docs or not has_relevant_content:
                 return []
 
             return combined_docs
