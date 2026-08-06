@@ -20,7 +20,8 @@ class LLMFactory:
             Returns a unified BaseChatModel object to ensure strict interface compatibility.
         """
         #provider = os.getenv("LLM_PROVIDER", "local").strip().lower()
-
+        #"llama-3.1-8b-instant
+        #llama-3.3-70b-versatile
         if provider.lower() == 'groq':
             api_key = os.getenv("GROQ_API_KEY")
             # Pythonic secret resolution order: Environment Var -> Streamlit Secret -> Fail
@@ -34,7 +35,7 @@ class LLMFactory:
 
             if not api_key:
                 raise ValueError("Missing 'GROQ API KEY'. Please define it in your environment or .env file.")
-            selected_model = model_name or "llama-3.3-70b-versatile"
+            selected_model = model_name or "llama-3.1-8b-instant"
             print(f"LLM Factory: Initialize Cloud LLM via GROQ API [{selected_model}]...")
 
             return ChatGroq(
