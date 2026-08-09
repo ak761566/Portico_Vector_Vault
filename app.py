@@ -5,9 +5,9 @@ from torchgen.packaged.autograd.context import with_native_function_with_differe
 from rag_engine import RAGEngine
 
 # 1. Page Configuration
-st.set_page_config(page_title="Project Assistant", page_icon="", layout="centered")
-st.title("Ithaka (Portico) Project Assistant")
-st.caption("Grounded AI Q&A Engine powered by project Knowledge Base")
+st.set_page_config(page_title="PyRAG-Portico", page_icon="", layout="centered")
+st.title("Ithaka (Portico) Workbench Intelligence")
+#st.caption("Grounded AI Q&A Engine powered by project Knowledge Base")
 
 # 2. Lazy-load the backend engine using cache parameters
 # This ensures we only load the LLM and FAISS files ONCE, not on every keystroke.
