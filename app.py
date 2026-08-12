@@ -6,7 +6,7 @@ from rag_engine import RAGEngine
 
 # 1. Page Configuration
 st.set_page_config(page_title="PyRAG-Portico", page_icon="", layout="centered")
-st.title("Ithaka (Portico) Workbench Intelligence")
+st.title("Ithaka (Portico) Project Assistant")
 #st.caption("Grounded AI Q&A Engine powered by project Knowledge Base")
 
 # 2. Lazy-load the backend engine using cache parameters

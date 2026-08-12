@@ -1,59 +1,61 @@
 # DOMAIN: BUSINESS & CLIENT PROFILE
 # DOCUMENT TYPE: Client Overview & SLAs
+# ROOT_CONFLUENCE_REF: https://innodata-eng.atlassian.net/wiki/spaces/EAI/folder/83558466/Portico+Ithaka+-+ITH01
+
 
 ## . Organizational Overview
-ITHAKA is a global non-profit organization that provides critical infrastructure for the academic community. It operates three primary services designed to support the lifecycle of scholarly communication:
-•	JSTOR: Active access and discovery of academic content.
-•	Portico: Long-term digital preservation and archiving.
-•	Ithaka S+R: Research and strategic consulting for higher education.
+### ITHAKA is a global non-profit organization that provides critical infrastructure for the academic community. It operates three primary services designed to support the lifecycle of scholarly communication:
+- JSTOR: Active access and discovery of academic content.
+- Portico: Long-term digital preservation and archiving.
+- Ithaka S+R: Research and strategic consulting for higher education.
 
 ## Portico: The Dark Archive
-Portico serves as a permanent, secure archive for electronic journals, books, and digital collections. It acts as a safety net for the scholarly record, ensuring content remains available even if the original publisher can no longer provide it.
-Trigger Event Protocol
+- Portico serves as a permanent, secure archive for electronic journals, books, and digital collections. It acts as a safety net for the scholarly record, ensuring content remains available even if the original publisher can no longer provide it.
+### Trigger Event Protocol
 Content stored in Portico is generally "dark" (inaccessible) until a Trigger Event occurs. When triggered, the content is "lit up" for participating institutions. Triggers include:
-•	Publisher Insolvency: The publisher goes out of business.
-•	Title Discontinuation: A publisher stops providing access to a specific title or its back-catalog.
-•	Platform Failure: A catastrophic, long-term technical failure of the publisher's delivery system.
+- Publisher Insolvency: The publisher goes out of business.
+- Title Discontinuation: A publisher stops providing access to a specific title or its back-catalog.
+- Platform Failure: A catastrophic, long-term technical failure of the publisher's delivery system.
 
 ## Technical Preservation Workflow
-Portico’s methodology involves more than simple data storage; it focuses on Format Migration to prevent file obsolescence.
+- Portico’s methodology involves more than simple data storage; it focuses on Format Migration to prevent file obsolescence.
 
-Ingestion -> Content Stream Acquisition -> Receiving diverse delivery streams from over 1,300 publishers.
-Metadata Extraction -> Precision Tagging -> Capturing critical identifiers: ISSN, DOI, Volume, Issue, and Article Titles.
-Normalization -> Format Standardization -> Converting proprietary XML into a standardized, application-neutral format (e.g., JATS/NLM).
-Archival Storage -> Redundant Preservation -> Storing content in multiple, geographically distributed secure locations.
+# WORKFLOW: Ingestion --> Content Stream Acquisition --> Receiving diverse delivery streams from over 1,300 publishers.
+# WORKFLOW: Metadata Extraction --> Precision Tagging --> Capturing critical identifiers: ISSN, DOI, Volume, Issue, and Article Titles.
+# WORKFLOW: Normalization --> Format Standardization --> Converting proprietary XML into a standardized, application-neutral format (e.g., JATS/NLM).
+# WORKFLOW: Archival Storage --> Redundant Preservation --> Storing content in multiple, geographically distributed secure locations.
 
 ## Strategic Importance
-•	Trusted Digital Repository (TDR): Portico was the first service certified by the Center for Research Libraries (CRL), meeting the highest global standards for digital archiving.
-•	Community Funding: The service is supported by a dual-participation model where both libraries and publishers share the cost of long-term preservation.
-•	Future-Proofing: By standardizing metadata and file formats, Portico ensures that scholarly content remains readable and discoverable for decades, regardless of how technology changes.
+- Trusted Digital Repository (TDR): Portico was the first service certified by the Center for Research Libraries (CRL), meeting the highest global standards for digital archiving.
+- Community Funding: The service is supported by a dual-participation model where both libraries and publishers share the cost of long-term preservation.
+- Future-Proofing: By standardizing metadata and file formats, Portico ensures that scholarly content remains readable and discoverable for decades, regardless of how technology changes.
 
 ##  Executive Summary: Engineering Delivery
-Engineering Delivery is the technical engine that powers the Portico preservation lifecycle. It encompasses the end-to-end process of transforming diverse, incoming publisher data into a standardized, "future-proof" archival format. This process ensures that scholarly content is not just stored,  but remains structurally sound and intellectually discoverable for the long term.
+- Engineering Delivery is the technical engine that powers the Portico preservation lifecycle. It encompasses the end-to-end process of transforming diverse, incoming publisher data into a standardized, "future-proof" archival format. This process ensures that scholarly content is not just stored,  but remains structurally sound and intellectually discoverable for the long term.
 
-## The Engineering Pipeline (Phase-by-Phase)
+### The Engineering Pipeline (Phase-by-Phase)
 The delivery model follows a highly structured workflow to handle the "surgical-grade" requirements of scholarly archiving:
 
-##  Stream Integration & Ingest
-•	Source Management: Handles the automated retrieval of content via SFTP, Amazon S3, or direct API pulls.
-•	Package Analysis: Engineering teams develop "Publisher Profiles" that define how to unpack varied delivery formats (ZIP, TAR, etc.).
-•	Security Scanning: Initial virus scanning and file integrity verification (Fixity/MD5) are performed at the point of entry.
+####  Stream Integration & Ingest
+- Source Management: Handles the automated retrieval of content via SFTP, Amazon S3, or direct API pulls.
+- Package Analysis: Engineering teams develop "Publisher Profiles" that define how to unpack varied delivery formats (ZIP, TAR, etc.).
+- Security Scanning: Initial virus scanning and file integrity verification (Fixity/MD5) are performed at the point of entry.
 
-##  Transformation & Normalization
-•	XML Mapping: The critical stage where proprietary publisher XML is mapped and converted into a standardized, application-neutral format (primarily JATS or BITS).
-•	XSLT/XPath Implementation: Utilization of advanced XSLT logic to ensure that 100% of the metadata (ISSN, DOI, Volume/Issue info) is accurately extracted.
-•	Enrichment: The system programmatically enhances records with additional identifiers or persistent links as required by the preservation plan.
+#### Transformation & Normalization
+- XML Mapping: The critical stage where proprietary publisher XML is mapped and converted into a standardized, application-neutral format (primarily JATS or BITS).
+- XSLT/XPath Implementation: Utilization of advanced XSLT logic to ensure that 100% of the metadata (ISSN, DOI, Volume/Issue info) is accurately extracted.
+- Enrichment: The system programmatically enhances records with additional identifiers or persistent links as required by the preservation plan.
 
-##  Quality Gatekeeping (Validation)
-•	Format Characterization: Utilizing tools like JHOVE to verify that PDF, XML, and image files meet industry standards.
-•	Status Classification: Files are categorized based on their validity:
+####  Quality Gatekeeping (Validation)
+- Format Characterization: Utilizing tools like JHOVE to verify that PDF, XML, and image files meet industry standards.
+- Status Classification: Files are categorized based on their validity:
 o	Well-Formed and Valid: Ready for final archival.
 o	Well-Formed but Not Valid: Requires minor automated adjustment.
 o	Not Well-Formed: Trigger for manual intervention or re-delivery.
 
-## (Vendor) Engagement Model – Transformation & Normalization
+#### (Vendor) Engagement Model – Transformation & Normalization
 
-## Scope of Innodata Responsibility
+#### Scope of Innodata Responsibility
 
 While the internal Engineering team manages the overarching architecture and ingestion, the Innodata Team is the primary driver of Transformation & Normalization. This stage is the most critical link in the delivery chain, ensuring that raw publisher data is converted into a structurally sound, archival-grade format.
 The Innodata Team is responsible for the "Surgical-Grade" precision required to map diverse scholarly schemas into a unified standard.
@@ -61,71 +63,71 @@ To maintain consistency and code integrity, the Innodata team utilizes a standar
 
 ## Core Innodata Workflows
 
-A. XSLT Development & Maintenance
+### A. XSLT Development & Maintenance
 The Innodata Team handles the end-to-end XML transformation logic:
-•	Schema Analysis: Deconstructing proprietary publisher XML to identify data hierarchies.
-•	XSLT Mapping: Writing and maintaining complex XSLT 2.0/3.0 stylesheets to convert source data into JATS (Journal Article Tag Suite) or BITS standards.
-•	Version Control: Updating mappings when publishers change their delivery schemas or metadata structures.
+- Schema Analysis: Deconstructing proprietary publisher XML to identify data hierarchies.
+- XSLT Mapping: Writing and maintaining complex XSLT 2.0/3.0 stylesheets to convert source data into JATS (Journal Article Tag Suite) or BITS standards.
+- Version Control: Updating mappings when publishers change their delivery schemas or metadata structures.
 
-B. Metadata Extraction & Enrichment
+### B. Metadata Extraction & Enrichment
 The Innodata Team must ensure the programmatic capture of all "Golden Identifiers":
-•	Journal Level: P-ISSN, E-ISSN, Journal Title, and Publisher Name.
-•	Issue Level: Volume, Issue number, and Publication Date.
-•	Article Level: DOI (Digital Object Identifier), Article Title, Page Ranges, and Author Orchid IDs.
-•	Abstracts/References: Ensuring full-text or metadata-only references are correctly tagged for future link-rot resolution.
+- Journal Level: P-ISSN, E-ISSN, Journal Title, and Publisher Name.
+- Issue Level: Volume, Issue number, and Publication Date.
+- Article Level: DOI (Digital Object Identifier), Article Title, Page Ranges, and Author Orchid IDs.
+- Abstracts/References: Ensuring full-text or metadata-only references are correctly tagged for future link-rot resolution.
 
 ##  The Developer Toolchain: Git & Jenkins
 The Innodata team integrates their work into the Portico ecosystem using the following DevOps standards:
 
-I. Git: Version Control & Collaboration
-•	Code Repository: All XSLT mappings and Publisher Profiles are stored in Git. This ensures that we have a historical record of every change made to a publisher's ingestion logic.
-•	Branching Strategy: Innodata Team work on feature branches for new publisher on-boarding or bug fixes, ensuring the "Master" branch remains stable and production-ready.
-•	Peer Review: Git allows internal Portico engineers to review Innodata Team code before it is merged, ensuring "Surgical-Grade" coding standards are met.
+### I. Git: Version Control & Collaboration
+- Code Repository: All XSLT mappings and Publisher Profiles are stored in Git. This ensures that we have a historical record of every change made to a publisher's ingestion logic.
+- Branching Strategy: Innodata Team work on feature branches for new publisher on-boarding or bug fixes, ensuring the "Master" branch remains stable and production-ready.
+- Peer Review: Git allows internal Portico engineers to review Innodata Team code before it is merged, ensuring "Surgical-Grade" coding standards are met.
 
-II. Jenkins: Continuous Integration & Automated Ingest
-•	Automated Pipelines: Jenkins acts as the "Engine Room." Once Innodata Team pushes a code update to Git, Jenkins automatically triggers a build to test the new mapping.
-•	Batch Processing: Jenkins manages the automated "Fetchers" and "Loaders," moving content through the pipeline without manual triggers.
+### II. Jenkins: Continuous Integration & Automated Ingest
+- Automated Pipelines: Jenkins acts as the "Engine Room." Once Innodata Team pushes a code update to Git, Jenkins automatically triggers a build to test the new mapping.
+- Batch Processing: Jenkins manages the automated "Fetchers" and "Loaders," moving content through the pipeline without manual triggers.
 
 ##  Quality Assurance (QA) & Validation
 
-Before delivery to the Loading phase, the Innodata team executes:
-•	Schematron Validation: Running automated scripts to check for business rule compliance (e.g., "Every article must have a DOI or an ID").
-•	Visual Verification: Spot-checking rendered versions of the normalized XML against the original PDF to ensure no data loss during transformation.
-•	Error Correction: Triaging and fixing "Fallout" units that fail automated normalization.
+### Before delivery to the Loading phase, the Innodata team executes:
+- Schematron Validation: Running automated scripts to check for business rule compliance (e.g., "Every article must have a DOI or an ID").
+- Visual Verification: Spot-checking rendered versions of the normalized XML against the original PDF to ensure no data loss during transformation.
+- Error Correction: Triaging and fixing "Fallout" units that fail automated normalization.
 
 ## Collaboration & Feedback Loop
 
-The Innodata team interacts with internal stakeholders through the following channels:
-•	Jira (Atlassian Cloud): For tracking stream progress, bug reports on specific mappings, and fallout resolution.
-•	Technical Reviews: Periodic audits of XSLT code to ensure optimization and adherence to Portico's technical design standards.
-•	Standard Operating Procedures (SOPs): The Innodata team is expected to contribute to and follow the established SOPs for metadata extraction and normalization.
+### The Innodata team interacts with internal stakeholders through the following channels:
+- Jira (Atlassian Cloud): For tracking stream progress, bug reports on specific mappings, and fallout resolution.
+- Technical Reviews: Periodic audits of XSLT code to ensure optimization and adherence to Portico's technical design standards.
+- Standard Operating Procedures (SOPs): The Innodata team is expected to contribute to and follow the established SOPs for metadata extraction and normalization.
 
 ## Technical Tools for Innodata Team
-•	Transformation: XSLT, XPath, XQuery.
-•	Validation: Schematron, JHOVE, Oxygen XML Editor.
-•	Project Management: Jira , MS Team and Webex.
+- Transformation: XSLT, XPath, XQuery.
+- Validation: Schematron, JHOVE, Oxygen XML Editor.
+- Project Management: Jira , MS Team and Webex.
 
 ## Operational Matrix
 
-Fetcher -> Automated Retrieval -> Raw Data Assets
-ConPrep -> Content Preparation -> Structured Archival Units (AUs)
-Normalization -> XML Transformation -> JATS/NLM Standardized Files
-Loading -> Database Commit -> PMD 2.0 Metadata Records
+# WORKFLOW: Fetcher -> Automated Retrieval -> Raw Data Assets
+# WORKFLOW: ConPrep -> Content Preparation -> Structured Archival Units (AUs)
+# WORKFLOW: Normalization -> XML Transformation -> JATS/NLM Standardized Files
+# WORKFLOW: Loading -> Database Commit -> PMD 2.0 Metadata Records
 
 ##  Key Performance Indicators (KPIs)
 
-To ensure high-quality delivery, the Portico engineering team monitors the following:
-•	Processing Throughput: Tracking the target of processing 30+ publisher streams per month.
-•	Fallout Rate: Minimizing the percentage of units that require manual "Content Coordinator" intervention.
-•	Metadata Accuracy: Ensuring zero-loss conversion for critical identifiers (DOIs, ISSNs).
-•	Fixity Maintenance: Regular "sweeps" to ensure zero data degradation (bit rot) across the distributed nodes.
+### To ensure high-quality delivery, the Portico engineering team monitors the following:
+- Processing Throughput: Tracking the target of processing 30+ publisher streams per month.
+- Fallout Rate: Minimizing the percentage of units that require manual "Content Coordinator" intervention.
+- Metadata Accuracy: Ensuring zero-loss conversion for critical identifiers (DOIs, ISSNs).
+- Fixity Maintenance: Regular "sweeps" to ensure zero data degradation (bit rot) across the distributed nodes.
 
 
 ##  Technology Stack
-•	Languages: Java, Python, XSLT 2.0/3.0.
-•	Standards: JATS (NISO Z39.96), BITS, PREMIS, METS.
-•	Tools: Atlassian Cloud (Jira/Confluence), AWS Infrastructure, JHOVE, Schematron.
-•	Database: Oracle for managing PMD (Preservation Metadata).
+- Languages: Java, Python, XSLT 2.0/3.0.
+- Standards: JATS (NISO Z39.96), BITS, PREMIS, METS.
+- Tools: Atlassian Cloud (Jira/Confluence), AWS Infrastructure, JHOVE, Schematron.
+- Database: Oracle for managing PMD (Preservation Metadata).
 
 
 ##  QA Philosophy: "Surgical-Grade" Integrity
@@ -134,29 +136,28 @@ In the Portico ecosystem, Quality Assurance (QA) is the safeguard for the long-t
 ##  The Multi-Tiered QA Framework
 The QA process is embedded into every phase of the delivery pipeline to ensure zero data degradation.
 
-A. Automated Validation (System Gatekeeping)
-•	Format Characterization: Automated use of JHOVE to verify that PDFs, XMLs, and image files are "Well-Formed and Valid" according to their technical specifications.
-•	Schematron Logic: Automated business rule checks to ensure mandatory metadata—DOI, ISSN, Volume, and Issue—is present and follows defined schemas before proceeding to the next stage.
+### A. Automated Validation (System Gatekeeping)
+- Format Characterization: Automated use of JHOVE to verify that PDFs, XMLs, and image files are "Well-Formed and Valid" according to their technical specifications.
+- Schematron Logic: Automated business rule checks to ensure mandatory metadata—DOI, ISSN, Volume, and Issue—is present and follows defined schemas before proceeding to the next stage.
 
-B. Transformation QA (The Innodata-Internal Loop)
+### B. Transformation QA (The Innodata-Internal Loop)
 The Innodata Team performs the primary validation on transformed content:
-•	Schema Validation: Ensuring the output XML adheres strictly to the JATS or BITS NISO standards.
-•	Visual Regression: A "Surgical" comparison between the source PDF and the normalized XML output to ensure special characters (mathematical symbols, Greek letters), tables, and citations are preserved correctly.
-•	Edge Case Testing: Testing XSLT mappings against complex articles to ensure the logic handles outliers in publisher formatting.
+- Schema Validation: Ensuring the output XML adheres strictly to the JATS or BITS NISO standards.
+- Visual Regression: A "Surgical" comparison between the source PDF and the normalized XML output to ensure special characters (mathematical symbols, Greek letters), tables, and citations are preserved correctly.
+- Edge Case Testing: Testing XSLT mappings against complex articles to ensure the logic handles outliers in publisher formatting.
 
-C. Content Operations Audit (Internal)
+### C. Content Operations Audit (Internal)
 The internal team performs periodic "spot-checks" on Innodata-delivered batches:
-•	Statistical Sampling: Randomly selecting Archival Units (AUs) to verify metadata accuracy against global registries like Crossref.
-•	Stream Health Checks: Monitoring "Fallout" rates to identify systemic issues with specific publisher delivery streams.
+- Statistical Sampling: Randomly selecting Archival Units (AUs) to verify metadata accuracy against global registries like Crossref.
+- Stream Health Checks: Monitoring "Fallout" rates to identify systemic issues with specific publisher delivery streams.
 
 ##  Release Management & Deployment Lifecycle
 Portico utilizes a controlled release cycle to maintain the stability of the PMD 2.0 (Preservation Metadata) environment.
 
-
-Development -> XSLT Mapping & Profile Updates -> Development of new publisher ingestion logic.
-Staging/UAT -> Batch Ingest Simulation -> Validating how new profiles interact with the ConPrep engine.
-Production -> Loading to the Dark Archive -> Final commit of content to primary and redundant nodes.
-Post-Release -> Fixity Sweep -> Automated confirmation of successful load and replication.
+# WORKFLOW: Development -> XSLT Mapping & Profile Updates -> Development of new publisher ingestion logic.
+# WORKFLOW: Staging/UAT -> Batch Ingest Simulation -> Validating how new profiles interact with the ConPrep engine.
+# WORKFLOW: Production -> Loading to the Dark Archive -> Final commit of content to primary and redundant nodes.
+# WORKFLOW: Post-Release -> Fixity Sweep -> Automated confirmation of successful load and replication.
 
 ##  Final Release "Sign-Off" Criteria
 Before a content stream is officially "Archived," it must meet the following readiness standards:
@@ -165,60 +166,60 @@ Before a content stream is officially "Archived," it must meet the following rea
 3.	Redundancy: Validation that the content has been successfully replicated across geographically distributed storage nodes.
 
 
-1. Operational Mission
+## 1. Operational Mission
 The Operations & Support function at Portico is responsible for maintaining the health, continuity, and throughput of the digital preservation pipeline. While Engineering builds the tools and Innodata Team handle the transformation, the Operations team ensures the "lights stay on" and that the targeted 30 publisher streams per month move from ingest to archival commit without bottleneck.
 
-2. Monitoring and Checking
-To ensure "Surgical-Grade" precision, support is divided into three distinct tiers:
-Tier 1: Content Monitoring (Operations)
-•	Stream Health Tracking: Daily monitoring of automated "Fetchers" to ensure publisher data is arriving as scheduled.
-•	Initial Triage: Identifying "hard failures" (e.g., expired SFTP credentials, broken APIs, or empty delivery packages).
-•	Communication: Acting as the primary point of contact for publishers regarding delivery issues.
-Tier 2: Technical Support & Fallout Management (Innodata/Ops)
-•	Error Resolution: Handling "Fallout"—units that failed automated ingest due to metadata inconsistencies or schema violations.
-•	Data Correction: Performing manual "surgical" fixes on XML metadata (DOIs, ISSNs) when automated XSLT logic cannot resolve an edge case.
-•	Profile Tuning: Collaborating with the Innodata team to update Publisher Profiles if a publisher changes their delivery format.
-III. Tier 3: Systems & Infrastructure Support (Engineering)
-•	Pipeline Optimization: Resolving system-level bottlenecks in the ConPrep or Loading engines.
-•	Database Integrity: Maintaining the PMD 2.0 database and ensuring performant metadata indexing.
-•	Disaster Recovery: Managing geographical replication and self-healing protocols for the distributed archive nodes.
+## 2. Monitoring and Checking:
+### To ensure "Surgical-Grade" precision, support is divided into three distinct tiers:
+#### Tier 1: Content Monitoring (Operations)
+- Stream Health Tracking: Daily monitoring of automated "Fetchers" to ensure publisher data is arriving as scheduled.
+- Initial Triage: Identifying "hard failures" (e.g., expired SFTP credentials, broken APIs, or empty delivery packages).
+- Communication: Acting as the primary point of contact for publishers regarding delivery issues.
+#### Tier 2: Technical Support & Fallout Management (Innodata/Ops)
+- Error Resolution: Handling "Fallout"—units that failed automated ingest due to metadata inconsistencies or schema violations.
+- Data Correction: Performing manual "surgical" fixes on XML metadata (DOIs, ISSNs) when automated XSLT logic cannot resolve an edge case.
+- Profile Tuning: Collaborating with the Innodata team to update Publisher Profiles if a publisher changes their delivery format.
+#### III. Tier 3: Systems & Infrastructure Support (Engineering)
+- Pipeline Optimization: Resolving system-level bottlenecks in the ConPrep or Loading engines.
+- Database Integrity: Maintaining the PMD 2.0 database and ensuring performant metadata indexing.
+- Disaster Recovery: Managing geographical replication and self-healing protocols for the distributed archive nodes.
 
 ##  Incident Management & Resolution Workflow
 
-All operational issues are tracked via Jira Service Management to ensure a searchable history of technical quirks.
+### All operational issues are tracked via Jira Service Management to ensure a searchable history of technical quirks.
 
-Ingest Failure->Source data cannot be retrieved.->Ops contacts Publisher / Resets SFTP.
-Validation Error->Files fail JHOVE or Schematron checks.->Tier 2 analyzes file; requests re-delivery or applies fix.
-Normalization Fallout->XSLT fails to map proprietary XML.->Vendor Team updates XSLT mapping/Profile.
-Fixity Mismatch	Checksum failure during replication.->Tier 3 triggers "Self-Healing" from redundant node.
+# WORKFLOW: Ingest Failure->Source data cannot be retrieved.->Ops contacts Publisher / Resets SFTP.
+# WORKFLOW: Validation Error->Files fail JHOVE or Schematron checks.->Tier 2 analyzes file; requests re-delivery or applies fix.
+# WORKFLOW: Normalization Fallout->XSLT fails to map proprietary XML.->Vendor Team updates XSLT mapping/Profile.
+# WORKFLOW: Fixity Mismatch	Checksum failure during replication.->Tier 3 triggers "Self-Healing" from redundant node.
 
-4. Maintenance & Proactive Support
-•	Fixity Sweeps: Periodic, automated audits of the entire archive to detect and repair damaged files.
-•	Format Watch: Active monitoring of file formats (e.g., evolving PDF standards) to determine when a global migration or normalization update is required.
-•	System Upgrades: Scheduled maintenance of the Atlassian Cloud environment and storage infrastructure to ensure 99.9% uptime for ingest services.
+### 4. Maintenance & Proactive Support
+- Fixity Sweeps: Periodic, automated audits of the entire archive to detect and repair damaged files.
+- Format Watch: Active monitoring of file formats (e.g., evolving PDF standards) to determine when a global migration or normalization update is required.
+- System Upgrades: Scheduled maintenance of the Atlassian Cloud environment and storage infrastructure to ensure 99.9% uptime for ingest services.
 
-5. Tooling & Access
-•	Monitoring: Internal Dashboards for stream throughput and fallout volume.
-•	Collaboration: Jira for long-term issue tracking.
-•	Documentation: All resolution steps for specific publisher errors must be logged in the "Known Issues" section of the relevant Publisher TuronOver Document (ToD).
+### 5. Tooling & Access
+- Monitoring: Internal Dashboards for stream throughput and fallout volume.
+- Collaboration: Jira for long-term issue tracking.
+- Documentation: All resolution steps for specific publisher errors must be logged in the "Known Issues" section of the relevant Publisher TuronOver Document (ToD).
 
 ##  What is Governance?
 Governance is the set of rules and tracking tools Portico use to make sure every digital article is accounted for, handled correctly by our teams, and stored securely.
 
-##  The "Paper Trail" 
+##   The "Paper Trail"
 Portico treat every digital file like a high-value package with a archival id. Portico follow it through four main stages:
-•	The Arrival: Did the publisher send the files they promised? We track our goal of finishing 30 publisher collections every month.
-•	The Transformation: When Innodata Team cleans up the data and converts it to our standard format, Portico track their progress and accuracy.
-•	The Health Check: Portico periodically run "digital physicals" on our stored files to make sure they haven't become corrupted (this is called a "Fixity Check").
-•	The Vault Report: Portico keep a dashboard that shows exactly what is safely "locked away" and ready to be used if a publisher ever goes out of business.
+- The Arrival: Did the publisher send the files they promised? We track our goal of finishing 30 publisher collections every month.
+- The Transformation: When Innodata Team cleans up the data and converts it to our standard format, Portico track their progress and accuracy.
+- The Health Check: Portico periodically run "digital physicals" on our stored files to make sure they haven't become corrupted (this is called a "Fixity Check").
+- The Vault Report: Portico keep a dashboard that shows exactly what is safely "locked away" and ready to be used if a publisher ever goes out of business.
 
-The Tools We Use
-•	Jira: Our "To-Do List." Every task, error, or fix gets a ticket so we know who worked on it and when it was finished.
-•	Turn Over Document (ToD): Our "Instruction Manual." This is where we keep our "Publisher Profiles" and "How-To" guides so everyone stays on the same page.
+## The Tools We Use
+- Jira: Our "To-Do List." Every task, error, or fix gets a ticket so we know who worked on it and when it was finished.
+- Turn Over Document (ToD): Our "Instruction Manual." This is where we keep our "Publisher Profiles" and "How-To" guides so everyone stays on the same page.
 
-## Keeping Everyone Accountable
-•	Standup Meetings: We get together thrice a week to look at the numbers. If the "Fix-it Rate" is too high or "Work Speed" is too slow, we figure out why and help the team.
-•	Innodata Team work Check-ins: We regularly review the Innodata Team's work to ensure they are meeting our "Surgical-Grade" quality standards.
-•	Safety Audits: Once a year, we do a deep dive to prove to the academic community that our "vault" is still the safest place for their research.
+##  Keeping Everyone Accountable
+- Standup Meetings: We get together thrice a week to look at the numbers. If the "Fix-it Rate" is too high or "Work Speed" is too slow, we figure out why and help the team.
+- Innodata Team work Check-ins: We regularly review the Innodata Team's work to ensure they are meeting our "Surgical-Grade" quality standards.
+- Safety Audits: Once a year, we do a deep dive to prove to the academic community that our "vault" is still the safest place for their research.
 
 

@@ -34,6 +34,7 @@ class LLMFactory:
                     pass
 
             if not api_key:
+                ## New model " model="openai/gpt-oss-20b", " if the  groq deprecate  model=llama-3.1-8b-instant
                 raise ValueError("Missing 'GROQ API KEY'. Please define it in your environment or .env file.")
             selected_model = model_name or "llama-3.1-8b-instant"
             print(f"LLM Factory: Initialize Cloud LLM via GROQ API [{selected_model}]...")

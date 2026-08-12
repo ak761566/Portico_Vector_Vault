@@ -15,6 +15,7 @@ class VectorStoreManager:
         fast on CPU, and performs well for search.
         """
         self.index_path = Path(index_path)
+
         # Check if the index folder exists; if not, build it on the fly!
         if not self.index_path.exists():
             print("Index not found: triggering automatic ingestion..")
