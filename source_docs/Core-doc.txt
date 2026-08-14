@@ -1,6 +1,6 @@
 # DOMAIN: BUSINESS & CLIENT PROFILE
 # DOCUMENT TYPE: Client Overview & SLAs
-# ROOT_CONFLUENCE_REF: https://innodata-eng.atlassian.net/wiki/spaces/EAI/folder/83558466/Portico+Ithaka+-+ITH01
+# ROOT_CONFLUENCE_REF: https://innodata-eng.atlassian.net/wiki/spaces/EAI/pages/83230805/Project+Overview+-+ITHAKA
 
 
 ## . Organizational Overview
