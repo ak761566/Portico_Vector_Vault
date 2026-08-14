@@ -1,9 +1,10 @@
 # DOMAIN: BUSINESS & CLIENT PROFILE
 # DOCUMENT TYPE: Client Overview & SLAs
-# ROOT_CONFLUENCE_REF: https://innodata-eng.atlassian.net/wiki/spaces/EAI/pages/83230805/Project+Overview+-+ITHAKA
-
+# ROOT_CONFLUENCE_REF: https://innodata-eng.atlassian.net/wiki/spaces/EAI/folder/83558466
 
 ## . Organizational Overview
+## ROOT_CONFLUENCE_REF:  https://innodata-eng.atlassian.net/wiki/spaces/EAI/pages/83230805/Project+Overview+-+ITHAKA
+
 ### ITHAKA is a global non-profit organization that provides critical infrastructure for the academic community. It operates three primary services designed to support the lifecycle of scholarly communication:
 - JSTOR: Active access and discovery of academic content.
 - Portico: Long-term digital preservation and archiving.
