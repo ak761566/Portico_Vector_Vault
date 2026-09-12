@@ -1,4 +1,4 @@
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from pathlib import Path
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableLambda
@@ -24,6 +24,7 @@ class RAGEngine:
         self.raw_docs = self.processor.process_directory(Path("./source_docs"))
         self.retriever = self.vector_manager.get_hybrid_retriever(self.raw_docs, vector_k=15, bm25_k=15)
         #self.retriever = self.vector_manager.get_retriever(search_k=20)
+
 
         # 2. Build the history-aware query re-writer prompt
         # This transforms conversational follow-ups into sharp standalone questions
@@ -70,9 +71,12 @@ class RAGEngine:
 
         ])
 
+        self.chain = self.get_chain()
+
 
     def _format_docs(self, docs: List) -> str:
         return "\n\n".join(doc.page_content for doc in docs)
+
 
 
     def get_chain(self):
@@ -92,7 +96,14 @@ class RAGEngine:
         full_rag_chain = retrieval_chain | self.qa_prompt | self.llm | StrOutputParser()
         return full_rag_chain
 
+    def update_model(self, provider: str, model_name: Optional[str] = None) -> None:
+        print(f"Swapping model engine to provider: '{provider}', model: '{model_name}'")
 
+        # 1. Swap LLM instance pointer
+        self.llm = LLMFactory.get_llm(provider, model_name)
+
+        # 2. Re-wire your chain with the new LLM (Reuses existing self.retriever!)
+        self.chain = self.get_chain()
 
 
 

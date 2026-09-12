@@ -10,6 +10,8 @@ st.set_page_config(page_title="PyRAG-Portico", page_icon="", layout="centered")
 st.title("Portico Smart AI Assistant")
 #st.caption("Grounded AI Q&A Engine powered by project Knowledge Base")
 
+st.sidebar.title("Engine Configuration")
+
 # 2. Lazy-load the backend engine using cache parameters
 # This ensures we only load the LLM and FAISS files ONCE, not on every keystroke.
 # @st.cache_resource
@@ -18,7 +20,6 @@ st.title("Portico Smart AI Assistant")
 
 # Cache the RAG engine initialization in memory across app reruns
 @st.cache_resource(show_spinner="Initializing RAG Engine & Loading Indexes...")
-
 def load_rag_engine()->RAGEngine:
     """
         Instantiates the RAG engine once and persists it in memory.
@@ -26,10 +27,26 @@ def load_rag_engine()->RAGEngine:
     """
     return RAGEngine()
 
+
+
 try:
     #engine = initialize_rag_backend()
     engine = load_rag_engine()
     chain = engine.get_chain()
+
+    model_choice = st.sidebar.radio("Active Inference Engine:",
+                                    ["Groq (gpt-4o-mini)", "Anthropic (Claude 3.5 Sonnet)"],
+                                    index=0,
+                                    help="Flip inference engine dynamically at runtime")
+
+    if "Claude" in model_choice:
+        #engine.update_model(provider="anthropic", model_name="claude-3-5-sonnet-20241022")
+        st.sidebar.success("Powered by Claude 3.5 Sonnet")
+    else:
+        #engine.update_model(provider="groq", model_name="llama-3.1-8b-instant")
+        st.sidebar.info("Powered by Groq LPU (Sub-second Latency)")
+
+
 except Exception as e:
     st.error(f"Failed to initialize backend engine. Ensure FAISS index exist. Error {e}")
     st.stop()
