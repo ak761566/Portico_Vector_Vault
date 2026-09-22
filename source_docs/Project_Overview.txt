@@ -1,9 +1,15 @@
-# DOMAIN: BUSINESS & CLIENT PROFILE
-# DOCUMENT TYPE: Client Overview & SLAs
-# ROOT_CONFLUENCE_REF: https://innodata-eng.atlassian.net/wiki/spaces/EAI/folder/83558466
-## ROOT_CONFLUENCE_REF:  https://innodata-eng.atlassian.net/wiki/spaces/EAI/pages/83230805/Project+Overview+-+ITHAKA
+---------------------------------------
+title: BUSINESS & CLIENT PROFILE
+source_url: https://innodata-eng.atlassian.net/wiki/spaces/EAI/folder/83558466
+canonical_url:: https://innodata-eng.atlassian.net/wiki/spaces/EAI/pages/83230805/Project Overview - ITHAKA
 
-## Project Overview - ITHAKA
+document_type: Client Overview & SLAs
+---------------------------------------
+
+## Architecture Guidelines - ITHAKA
+**Source:** [Architecture Guidelines] (https://innodata-eng.atlassian.net/wiki/spaces/EAI/pages/83230805/Project Overview - ITHAKA)
+**Source:** [Architecture Guidelines] (https://innodata-eng.atlassian.net/wiki/spaces/EAI/pages/87163079/Ithaka - Maintenance Stream Process Guide)
+
 
 ## Project Overview
 
