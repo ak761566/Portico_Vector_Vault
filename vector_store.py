@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 from typing import List, Optional
 from langchain_core.runnables import Runnable, RunnableLambda, RunnableConfig
@@ -6,6 +7,7 @@ from langchain_community.retrievers import BM25Retriever
 from langchain_core.documents import Document
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
+from get_hybridRetriever import CustomHybridRetriever
 
 class VectorStoreManager:
     def __init__(self, index_path: str = 'faiss_index', model_name : str = "sentence-transformers/all-MiniLM-L6-v2"):
@@ -58,7 +60,7 @@ class VectorStoreManager:
 
         return vector_db.as_retriever(search_kwarg={"k":search_k})
 
-    def get_hybrid_retriever(self, all_docs: List[Document], vector_k: int=15, bm25_k: int=15):
+    def get_hybrid_retriever(self, all_docs: List[Document], vector_k: int=15, bm25_k: int=15)->Runnable:
         if not Path(self.index_path):
             raise FileNotFoundError(f"Vector index path not found. Run build_and_save_index first.")
 
@@ -67,40 +69,58 @@ class VectorStoreManager:
         bm25_retriever = BM25Retriever.from_documents(all_docs)
         bm25_retriever.k = bm25_k
 
-        # 2. Define an inner execution function that mimics the LangChain Retriever interface
-        def custom_ensemble_search(query: str) -> List[Document]:
-            # Run both searches in parallel threads
-            faiss_results = faiss_retriever.invoke(query)
-            bm25_results = bm25_retriever.invoke(query)
 
-            # Reciprocal Rank Fusion (RRF) algorithm simulation:
-            # We merge the lists while strictly preserving order and deduplicating rows
-            seen_contents = set()
-            combined_docs = []
+        return CustomHybridRetriever(faiss_retriever, bm25_retriever)
 
-            for doc in faiss_results + bm25_results:
-                if doc.page_content not in seen_contents:
-                    seen_contents.add(doc.page_content)
-                    combined_docs.append(doc)
+    # def get_hybrid_retriever(self, all_docs: List[Document], vector_k: int=15, bm25_k: int=15):
+    #     if not Path(self.index_path):
+    #         raise FileNotFoundError(f"Vector index path not found. Run build_and_save_index first.")
+    #
+    #     vector_db = FAISS.load_local(self.index_path, self.embedding, allow_dangerous_deserialization=True)
+    #     faiss_retriever = vector_db.as_retriever(search_kwargs={"k":vector_k})
+    #     bm25_retriever = BM25Retriever.from_documents(all_docs)
+    #     bm25_retriever.k = bm25_k
+    #
+    #     # 2. Define an inner execution function that mimics the LangChain Retriever interface
+    #     def custom_ensemble_search(query: str) -> List[Document]:
+    #         # Run both searches in parallel threads
+    #         faiss_results = faiss_retriever.invoke(query)
+    #         #print("faiss_results:", faiss_results)
+    #         bm25_results = bm25_retriever.invoke(query)
+    #         #print("bm25_results:", bm25_results)
+    #
+    #         # Reciprocal Rank Fusion (RRF) algorithm simulation:
+    #         # We merge the lists while strictly preserving order and deduplicating rows
+    #         seen_contents = set()
+    #         combined_docs = []
+    #
+    #         for doc in faiss_results + bm25_results:
+    #             if doc.page_content not in seen_contents:
+    #                 seen_contents.add(doc.page_content)
+    #                 combined_docs.append(doc)
+    #
+    #         # Extract basic query terms (ignoring stop words) to verify minimum keyword presence
+    #         #query_terms = [word.lower() for word in query.split() if len(word)>2]
+    #         query_terms = [word.lower() for word in re.findall(r"\b\w+\b", query) if len(word) > 2]
+    #
+    #         # Check if at least one meaningful query term or identifier exists in the context
+    #         has_relevant_content = any(
+    #             any(term in doc.page_content.lower() for term in query_terms) for doc in combined_docs
+    #         )
+    #
+    #
+    #         if not combined_docs or not has_relevant_content:
+    #             print(f"[Guardrail] Blocked query: '{query}' | Tokens: {query_terms}")
+    #             return []
+    #
+    #         return combined_docs
+    #
+    #         # 3. Create a clean wrapper class so it behaves exactly like a LangChain runnable component
+    #
+    #     class CustomHybridRetriever(Runnable):
+    #         def invoke(self, query: str, config: Optional[RunnableConfig] = None) -> List[Document]:
+    #             return custom_ensemble_search(query)
+    #
+    #     return CustomHybridRetriever()
 
-            # Extract basic query terms (ignoring stop words) to verify minimum keyword presence
-            query_terms = [word.lower() for word in query.split() if len(word)>2]
 
-            # Check if at least one meaningful query term or identifier exists in the context
-            has_relevant_content = any(
-                any(term in doc.page_content.lower() for term in query_terms) for doc in combined_docs
-            )
-
-
-            if not combined_docs or not has_relevant_content:
-                return []
-
-            return combined_docs
-
-            # 3. Create a clean wrapper class so it behaves exactly like a LangChain runnable component
-
-        class CustomHybridRetriever(Runnable):
-            def invoke(self, query: str, config: Optional[RunnableConfig] = None) -> List[Document]:
-                return custom_ensemble_search(query)
-
-        return CustomHybridRetriever()

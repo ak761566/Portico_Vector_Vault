@@ -5,18 +5,19 @@ from langchain_core.messages import HumanMessage, AIMessage
 if __name__ == "__main__":
     print("Initialize full RAG Core...")
     engine = RAGEngine()
+    #engine.configure_llm(provider="groq")
     chain = engine.get_chain()
 
     # Mock conversation memory state
     # Let's pretend the user already asked about a task, and the system responded
 
     mock_history = [
-        HumanMessage(content="What are the core business of Ithaka?"),
+        HumanMessage(content="List all workbench errors recorded by the developer 'Dinesh Singh' across all streams."),
         AIMessage(content="It is related to content archival.")
     ]
 
     # Follow-up question referencing the past conversation turn ("its status")
-    follow_up=f"How they use Jira?"
+    follow_up=f"And summarize the required fix for each."
 
     print(f"\n Test input: {follow_up}")
     print("processing and retrieving context....")

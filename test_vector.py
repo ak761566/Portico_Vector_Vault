@@ -17,6 +17,14 @@ if __name__ == "__main__":
     #                       '\n•\tDiscoverability: High-precision metadata indexing '
     #                       'using standardized identifiers (DOI, ISSN, ISBN).'),
 
+    dinesh_docs = [docs for docs in chunks if "dinesh" in docs.page_content.lower()]
+    print(f"[*] Length of dinesh docs {len(dinesh_docs)}")
+
+    if not dinesh_docs:
+        print("Critical: Dinesh Singh does not exist in source docs")
+    else:
+        print(f"[*] Sample match {dinesh_docs[0].page_content[:200]}")
+
     if chunks:
         # 2. Build the vector database
         v_manager = VectorStoreManager()
@@ -24,12 +32,13 @@ if __name__ == "__main__":
 
         # 3. Test a mock retrieval query
         #retriever = v_manager.get_retriever(search_k=2)
-        retriever = v_manager.get_hybrid_retriever(chunks)
+        retriever = v_manager.get_hybrid_retriever(chunks, vector_k=15, bm25_k=15)
         # Type a query that matches something inside your sample Excel rows!
-        test_query = "what are core preservation pillars?"
+        test_query = "List all workbench errors recorded by the developer Dinesh Singh across all streams"
         result = retriever.invoke(test_query)
-        print(f"\n Search Complete. Retrieved {len(test_query)} relevant entries")
+        print(f"\n Search Complete. Retrieved {len(result)} relevant entries")
         for idx, doc in enumerate(result):
-            print(f"\n[Match {idx + 1}] Metadata {doc.metadata}")
-            print(f"Content Summary:\n{doc.page_content}")
+            matches_name = "dinesh" in doc.page_content.lower()
+            print(f"\n[Chunk {idx + 1}] [Contain dinesh: {matches_name}]")
+            #print(f"Content Summary:\n{doc.page_content}")
 
