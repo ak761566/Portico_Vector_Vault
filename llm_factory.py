@@ -48,6 +48,7 @@ class LLMFactory:
 
     # --- config ---
     REGION = "ap-south-1"
+    PROFILE_ARN = "arn:aws:bedrock:ap-south-1:015615541381:application-inference-profile/94adswem4l7c"
     ACCOUNT_ID = "015615541381"
     TEAM = "enterprisesolution"
     PROFILE_NAME = f"team-{TEAM}-claude-sonnet"
@@ -127,11 +128,11 @@ class LLMFactory:
             boto_session = boto3.Session(**session_kwarg)
 
             # Step B: Create clients using our BEDROCK_CONFIG
-            bedrock_mgmt = boto_session.client("bedrock", config=cls.BEDROCK_CONFIG)
-            profile_arn = cls._resolve_profile_arn(bedrock_mgmt)
+            # bedrock_mgmt = boto_session.client("bedrock", config=cls.BEDROCK_CONFIG)
+            # profile_arn = cls._resolve_profile_arn(bedrock_mgmt)
 
-            if not profile_arn:
-                raise ValueError(f"Inference profile {profile_arn} could not be discovered.")
+            # if not profile_arn:
+            #     raise ValueError(f"Inference profile {profile_arn} could not be discovered.")
 
             runtime_client = boto_session.client(
                 service_name="bedrock-runtime",
@@ -140,14 +141,15 @@ class LLMFactory:
             )
 
             guardrail_config = {
-                "guardrailIdentifier": cls.GUARDRAIL_ARN,
+                "guardrailIdentifier": cls.GUARDRAIL_ID,
                 "guardrailVersion": cls.GUARDRAIL_VERSION
             }
 
 
             return ChatBedrockConverse(
                                        client=runtime_client,
-                                       modelId=profile_arn,
+                                       model=cls.PROFILE_ARN,
+                                       provider="anthropic",
                                        temperature=temperature,
                                        max_tokens=1024,
                                        guardrail_config=guardrail_config)
@@ -155,7 +157,7 @@ class LLMFactory:
         elif provider.lower().strip() == 'groq':
             api_key = os.getenv("GROQ_API_KEY")
 
-            # Pythonic secret resolution order: Environment Var -> Streamlit Secret -> Fail
+
 
             if not api_key:
                 try:
