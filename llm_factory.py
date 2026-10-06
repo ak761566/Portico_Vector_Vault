@@ -36,8 +36,8 @@ class UserAWSCredentials:
         access_key = self.access_key_id.strip()
         secret_key = self.secret_access_key.strip()
 
-        print(f"[Received] Access_key_id: Length {len(self.access_key_id)} Prefix {self.access_key_id[:4]}"
-                             f"[Received] Access_key_id: Length {len(self.secret_access_key)}  Prefix {self.secret_access_key[:4]}")
+        # print(f"[Received] Access_key_id: Length {len(self.access_key_id)} Prefix {self.access_key_id[:4]}"
+        #                      f"[Received] Access_key_id: Length {len(self.secret_access_key)}  Prefix {self.secret_access_key[:4]}")
 
         if not access_key or not secret_key:
             raise ValueError(f"AWS access key or secret key cannot be empty.")
@@ -49,7 +49,9 @@ class LLMFactory:
 
     # --- config ---
     REGION = "ap-south-1"
-    PROFILE_ARN = "arn:aws:bedrock:ap-south-1:015615541381:application-inference-profile/94adswem4l7c"
+    MODEL_ID = "arn:aws:bedrock:ap-south-1:015615541381:application-inference-profile/94adswem4l7c"
+    PROVIDER = "anthropic"
+    BASE_MODEL_ID = "global.anthropic.claude-sonnet-4-6"
     ACCOUNT_ID = "015615541381"
     TEAM = "enterprisesolution"
     PROFILE_NAME = f"team-{TEAM}-claude-sonnet"
@@ -154,11 +156,21 @@ class LLMFactory:
             #                            max_tokens=1024,
             #                            guardrail_config=guardrail_config)
 
+            # return ChatBedrockConverse(
+            #     client=runtime_client,
+            #     model_id="arn:aws:bedrock:ap-south-1:015615541381:application-inference-profile/94adswem4l7c",
+            #     provider="anthropic",
+            #     base_model_id="global.anthropic.claude-sonnet-4-6",
+            #     temperature = temperature,
+            #     max_tokens=1024,
+            #     guardrail_config=guardrail_config
+            # )
+            print(cls.MODEL_ID, cls.PROVIDER, cls.BASE_MODEL_ID)
             return ChatBedrockConverse(
                 client=runtime_client,
-                model_id="arn:aws:bedrock:ap-south-1:015615541381:application-inference-profile/94adswem4l7c",
-                provider="anthropic",
-                base_model_id="global.anthropic.claude-sonnet-4-6",
+                model_id=cls.MODEL_ID,
+                provider=cls.PROVIDER,
+                base_model_id=cls.BASE_MODEL_ID,
                 temperature = temperature,
                 max_tokens=1024,
                 guardrail_config=guardrail_config

@@ -39,8 +39,8 @@ except Exception as exc:
 #user_credentials: Optional[UserAWSCredentials] = None
 
 st.sidebar.title("Model Selection")
-model_choice = st.sidebar.radio("Active Inference Engine:",
-                                    ["Groq", "AWS Bedrock (Claude)"])
+#model_choice = st.sidebar.radio("Active Inference Engine:",["Groq", "AWS Bedrock (Claude)"])
+model_choice = st.sidebar.radio("Active Inference Engine:",["AWS Bedrock (Claude)"])
 
 if model_choice == "AWS Bedrock (Claude)":
     with st.sidebar.expander("AWS Bedrock Key empty", expanded=True):
