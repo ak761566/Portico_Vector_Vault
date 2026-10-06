@@ -2,6 +2,7 @@ import os
 from dataclasses import dataclass
 from typing import Optional
 import boto3
+from boto3 import client
 from botocore.config import Config
 
 from pathlib import Path
@@ -52,7 +53,7 @@ class LLMFactory:
     ACCOUNT_ID = "015615541381"
     TEAM = "enterprisesolution"
     PROFILE_NAME = f"team-{TEAM}-claude-sonnet"
-    GUARDRAIL_ID = "63dpeulefsba"
+    GUARDRAIL_ID = "z8r83pgj0a1s"
     GUARDRAIL_VERSION = "1"
     GUARDRAIL_ARN = f"arn:aws:bedrock:{REGION}:{ACCOUNT_ID}:guardrail/{GUARDRAIL_ID}"
     # Keep in sync with your DynamoDB PRICE item (USD per 1K tokens)
@@ -145,14 +146,23 @@ class LLMFactory:
                 "guardrailVersion": cls.GUARDRAIL_VERSION
             }
 
+            # return ChatBedrockConverse(
+            #                            client=runtime_client,
+            #                            model_id="global.anthropic.claude-sonnet-4-6",
+            #                            provider="anthropic",
+            #                            temperature=temperature,
+            #                            max_tokens=1024,
+            #                            guardrail_config=guardrail_config)
 
             return ChatBedrockConverse(
-                                       client=runtime_client,
-                                       model=cls.PROFILE_ARN,
-                                       provider="anthropic",
-                                       temperature=temperature,
-                                       max_tokens=1024,
-                                       guardrail_config=guardrail_config)
+                client=runtime_client,
+                model_id="arn:aws:bedrock:ap-south-1:015615541381:application-inference-profile/94adswem4l7c",
+                provider="anthropic",
+                base_model_id="global.anthropic.claude-sonnet-4-6",
+                temperature = temperature,
+                max_tokens=1024,
+                guardrail_config=guardrail_config
+            )
 
         elif provider.lower().strip() == 'groq':
             api_key = os.getenv("GROQ_API_KEY")
