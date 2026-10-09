@@ -58,7 +58,7 @@ if model_choice == "AWS Bedrock (Claude)":
             try:
                 #user_credentials = UserAWSCredentials(access_key_id=user_access_key, secret_access_key=user_secret_access_key, session_token=user_token, region_name=user_region)
                 user_credentials = UserAWSCredentials(access_key_id=access_key, secret_access_key=secret_access_key, region_name=user_region)
-                print(user_credentials)
+                #print(user_credentials)
                 if engine.current_provider != "bedrock" or not engine.is_ready:
                     with st.sidebar.status("Binding bedrock claude...", expanded=False):
                         engine.configure_llm(provider="bedrock", aws_credentials=user_credentials)

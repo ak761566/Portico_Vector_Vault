@@ -165,7 +165,7 @@ class LLMFactory:
             #     max_tokens=1024,
             #     guardrail_config=guardrail_config
             # )
-            print(cls.MODEL_ID, cls.PROVIDER, cls.BASE_MODEL_ID)
+           # print(cls.MODEL_ID, cls.PROVIDER, cls.BASE_MODEL_ID)
             return ChatBedrockConverse(
                 client=runtime_client,
                 model_id=cls.MODEL_ID,

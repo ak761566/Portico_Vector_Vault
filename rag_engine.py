@@ -1,3 +1,4 @@
+import re
 from typing import Dict, Any, List, Optional
 from pathlib import Path
 
@@ -15,6 +16,24 @@ from ingestion import DocumentProcessor
 
 from llm_factory import LLMFactory, UserAWSCredentials
 from vector_store import VectorStoreManager
+
+
+def cleaned_standalone_questions(raw_questions: str) -> str:
+    cleaned = raw_questions.strip()
+    patterns = [
+        r"^here is the (standalone|reformulated) question[:\s]*",
+        r"^standalone question[:\s]*",
+        r"^reformulated question[:\s]*",
+        r"^question[:\s]*"
+    ]
+
+    for pattern in patterns:
+        cleaned = re.sub(pattern, "", cleaned, flags=re.IGNORECASE).strip()
+
+    if cleaned.startswith('"') and cleaned.endswith('"') or cleaned.startswith("'") or cleaned.endswith("'"):
+        cleaned = cleaned[1:-1].strip()
+
+    return cleaned
 
 class RAGEngine:
     def __init__(self,default_provider: str= "groq", source_docs: Path = "./source_docs", faiss_index: Path = "./faiss_index"):
@@ -37,6 +56,7 @@ class RAGEngine:
             "formulate a standalone question which can be understood without the chat history. "
             "Do NOT answer the question, just reformulate it if needed and otherwise return it as is. "
         )
+
 
         self.re_write_prompt = ChatPromptTemplate.from_messages(
             [
@@ -179,12 +199,14 @@ class RAGEngine:
                 print(f"[Rag Engine] Default provider is not initialized {exc}")
 
 
+
     def configure_llm(self, provider: str, model_name: Optional[str] = None, aws_credentials: Optional[UserAWSCredentials] = None) -> None:
         self.current_provider = provider
         self.llm = LLMFactory.get_llm(provider=self.current_provider, model_name=model_name, aws_credentials=aws_credentials)
 
         # Define the standalone question sub-chain
-        self.question_generator = self.re_write_prompt | self.llm | StrOutputParser()
+        #self.question_generator = self.re_write_prompt | self.llm | StrOutputParser()
+        self.question_generator = self.re_write_prompt | self.llm | StrOutputParser() | RunnableLambda(cleaned_standalone_questions)
 
         self.chain = self.get_chain()
 
