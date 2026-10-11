@@ -75,40 +75,6 @@ elif engine.current_provider != "groq":
 
 
 
-    # if "Claude" in model_choice or "Bedrock" in model_choice:
-    #     with st.sidebar.expander("AWS Bedrock Key empty", expanded=True):
-    #         user_access_key = st.text_input("AWS Access Key ID", type="password")
-    #         user_secret_access_key = st.text_input("AWS Secret Access Key ID", type="password")
-    #         user_token = st.text_input("AWS Session Token (Optional)", type="password")
-    #         user_region = st.selectbox("Region", options=["ap-south-1", "us-east-1"], index=0)
-    #
-    #         if user_access_key and user_secret_access_key:
-    #             user_credentials = UserAWSCredentials(access_key_id=user_access_key, secret_access_key=user_secret_access_key,
-    #                                                   session_token=user_token, region_name=user_region)
-    #             if not engine.is_ready:
-    #                try:
-    #                     engine.configure_llm(provider="bedrock", aws_credentials=user_credentials)
-    #                     st.sidebar.success("Powered by Claude 3.5 Sonnet")
-    #                except Exception as exc:
-    #                    st.sidebar.success("Failed to bind bedrock")
-    #         else:
-    #             st.sidebar.success("Enter AWS credentials to activate.")
-
-    # else:
-    #     engine.update_model(provider="groq")
-    #     st.sidebar.info("Powered by Groq LPU (Sub-second Latency)")
-
-    #selected_provider = "bedrock" if "Bedrock" in model_choice else "groq"
-
-    # if selected_provider == "bedrock":
-    #     if user_credentials:
-    #         engine.configure_llm(provider="bedrock", aws_credentials=user_credentials)
-    #     else:
-    #         engine.chain = None
-    # else:
-    #     engine.configure_llm(provider="groq")
-
-
 # ==========================================
 # 4. Session State & History Transcript
 # ==========================================
@@ -143,33 +109,6 @@ if user_query := st.chat_input("Ask Ithaka (Portico) project related questions."
         response_placeholder = st.empty()
         full_response = ""
 
-        # Telemetry in Streamlit sidebar or expander : Begin
-        # with st.spinner("Analyzing dependencies.."):
-        #     # 1. Inspect retrieval directly
-        #     retrieved_doc = engine.retriever.invoke(user_query)
-        #
-        #
-        #     with st.expander("Debug Retrival Inspector", expanded=False):
-        #         st.write(f"Document Retrieved: {len(retrieved_doc)}")
-        #         for idx,doc in enumerate(retrieved_doc):
-        #             st.code(f"Chunk {idx + 1}:\n{doc.page_content}")
-        #
-        #     if not retrieved_doc:
-        #         st.warning("Guardrail Alert: No relevant document found..")
-        #         st.stop()
-        #
-        #     try:
-        #         response = engine.chain.invoke({"question":user_query, "chat_history":[]})
-        #         if not response or not response.strip():
-        #             st.error("Model returned empty string. Check LLM provider/token limit")
-        #         else:
-        #             st.markdown(response)
-        #     except Exception as exc:
-        #         st.error(f"Execution failed: {type(exc).__name__} - {exc}")
-        #         import traceback
-        #         st.code(traceback.format_exc())
-
-        # Telemetry in Streamlit sidebar or expander : END
 
         try:
             # We use .stream() instead of .invoke() for an elite UX experience.
@@ -187,8 +126,9 @@ if user_query := st.chat_input("Ask Ithaka (Portico) project related questions."
             response_placeholder.markdown(full_response)
 
             # 6. Commit the current turn to persistent memory state
-            st.session_state.chat_history.append(HumanMessage(content=user_query))
-            st.session_state.chat_history.append(AIMessage(content=full_response))
+            if user_query.strip() and full_response.strip() and not full_response.startswith("This query is outside the scope"):
+                st.session_state.chat_history.append(HumanMessage(content=user_query.strip()))
+                st.session_state.chat_history.append(AIMessage(content=full_response.strip()))
         except Exception as e:
             response_placeholder.empty()
             st.error(f"An execution error occurred: {str(e)}")
