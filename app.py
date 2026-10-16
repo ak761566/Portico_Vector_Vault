@@ -1,9 +1,15 @@
-from typing import Optional
-
 import streamlit as st
+import os
+
+from typing import Optional
+from pathlib import Path
+from dotenv import load_dotenv
 from langchain_core.messages import AIMessage, HumanMessage
 from llm_factory import LLMFactory, UserAWSCredentials
 from rag_engine import RAGEngine
+
+env_path = Path(".")/".env"
+load_dotenv(dotenv_path=env_path)
 
 # ==========================================
 # 1. Page Configuration
@@ -38,42 +44,51 @@ except Exception as exc:
 # ==========================================
 #user_credentials: Optional[UserAWSCredentials] = None
 
-st.sidebar.title("Model Selection")
-#model_choice = st.sidebar.radio("Active Inference Engine:",["Groq", "AWS Bedrock (Claude)"])
-model_choice = st.sidebar.radio("Active Inference Engine:",["AWS Bedrock (Claude)"])
+# st.sidebar.title("Model Selection")
+# #model_choice = st.sidebar.radio("Active Inference Engine:",["Groq", "AWS Bedrock (Claude)"])
+# model_choice = st.sidebar.radio("Active Inference Engine:",["AWS Bedrock (Claude)"])
+#
+# if model_choice == "AWS Bedrock (Claude)":
+#     with st.sidebar.expander("AWS Bedrock Key empty", expanded=True):
+#         user_access_key = st.text_input("AWS Access Key ID", type="password")
+#         user_secret_access_key = st.text_input("AWS Secret Access Key ID", type="password")
+#         user_region = "ap-south-1"
+#         access_key = user_access_key.strip()
+#         secret_access_key = user_secret_access_key.strip()
+#
+#         if access_key and secret_access_key:
+#             try:
+#                 user_credentials = UserAWSCredentials(access_key_id=access_key, secret_access_key=secret_access_key, region_name=user_region)
+#                 if engine.current_provider != "bedrock" or not engine.is_ready:
+#                     with st.sidebar.status("Binding bedrock claude...", expanded=False):
+#                         engine.configure_llm(provider="bedrock", aws_credentials=user_credentials)
+#                 st.sidebar.success("Powered by claude.")
+#             except Exception as exc:
+#                 st.sidebar.error(f"Failed to bind bedrock {exc}")
+#         else:
+#             st.sidebar.error("Enter AWS credentials to activate claude.")
+#
+# elif engine.current_provider != "groq":
+#     engine.configure_llm(provider="groq")
+#     st.sidebar.info("Powered by Groq LPU")
 
-if model_choice == "AWS Bedrock (Claude)":
-    with st.sidebar.expander("AWS Bedrock Key empty", expanded=True):
-        user_access_key = st.text_input("AWS Access Key ID", type="password")
-        user_secret_access_key = st.text_input("AWS Secret Access Key ID", type="password")
-        # user_token = st.text_input("AWS Session Token (Optional)", type="password")
-        # user_region = st.selectbox("Region", options=["ap-south-1", "us-east-1"], index=0)
-        user_region = "ap-south-1"
-        # print(user_access_key)
-        # print(user_secret_access_key)
-        access_key = user_access_key.strip()
-        secret_access_key = user_secret_access_key.strip()
+user_access_key = os.getenv("AWS_ACCESS_KEY_ID")
+user_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+user_region = "ap-south-1"
+access_key = user_access_key.strip()
+secret_access_key = user_secret_access_key.strip()
 
-        if access_key and secret_access_key:
-            try:
-                #user_credentials = UserAWSCredentials(access_key_id=user_access_key, secret_access_key=user_secret_access_key, session_token=user_token, region_name=user_region)
-                user_credentials = UserAWSCredentials(access_key_id=access_key, secret_access_key=secret_access_key, region_name=user_region)
-                #print(user_credentials)
-                if engine.current_provider != "bedrock" or not engine.is_ready:
-                    with st.sidebar.status("Binding bedrock claude...", expanded=False):
-                        engine.configure_llm(provider="bedrock", aws_credentials=user_credentials)
-                st.sidebar.success("Powered by claude.")
-            except Exception as exc:
-                st.sidebar.error(f"Failed to bind bedrock {exc}")
-        else:
-            st.sidebar.error("Enter AWS credentials to activate claude.")
-
-elif engine.current_provider != "groq":
-    engine.configure_llm(provider="groq")
-    st.sidebar.info("Powered by Groq LPU")
-
-
-
+try:
+    # user_credentials = UserAWSCredentials(access_key_id=user_access_key, secret_access_key=user_secret_access_key, session_token=user_token, region_name=user_region)
+    user_credentials = UserAWSCredentials(access_key_id=access_key, secret_access_key=secret_access_key,
+                                          region_name=user_region)
+    # print(user_credentials)
+    if engine.current_provider != "bedrock" or not engine.is_ready:
+        with st.sidebar.status("Binding bedrock claude...", expanded=False):
+            engine.configure_llm(provider="bedrock", aws_credentials=user_credentials)
+    st.sidebar.success("Powered by claude.")
+except Exception as exc:
+    st.sidebar.error(f"Failed to bind bedrock {exc}")
 
 # ==========================================
 # 4. Session State & History Transcript
