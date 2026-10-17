@@ -17,7 +17,7 @@ load_dotenv(dotenv_path=env_path)
 st.set_page_config(page_title="PyRAG-Portico", page_icon="", layout="centered")
 #st.title("Ithaka (Portico) Project Assistant")
 st.title("Portico Smart AI Assistant")
-st.caption("Enterprise Knowledge Base Engine with Dynamic provider switching.")
+st.caption("Enterprise RAG Engine for Documentation Triage & Technical Error Resolution")
 
 # ==========================================
 # 2. Engine Cache & Lifecycle
@@ -31,7 +31,7 @@ def load_rag_engine()->RAGEngine:
         Prevents costly index reloading on every user chat interaction.
     """
     #return RAGEngine()
-    return RAGEngine(default_provider="groq")
+    return RAGEngine(default_provider="bedrock")
 
 try:
     engine = load_rag_engine()
@@ -72,23 +72,49 @@ except Exception as exc:
 #     engine.configure_llm(provider="groq")
 #     st.sidebar.info("Powered by Groq LPU")
 
-user_access_key = os.getenv("AWS_ACCESS_KEY_ID")
-user_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
-user_region = "ap-south-1"
-access_key = user_access_key.strip()
-secret_access_key = user_secret_access_key.strip()
 
-try:
-    # user_credentials = UserAWSCredentials(access_key_id=user_access_key, secret_access_key=user_secret_access_key, session_token=user_token, region_name=user_region)
-    user_credentials = UserAWSCredentials(access_key_id=access_key, secret_access_key=secret_access_key,
-                                          region_name=user_region)
-    # print(user_credentials)
-    if engine.current_provider != "bedrock" or not engine.is_ready:
-        with st.sidebar.status("Binding bedrock claude...", expanded=False):
-            engine.configure_llm(provider="bedrock", aws_credentials=user_credentials)
-    st.sidebar.success("Powered by claude.")
-except Exception as exc:
-    st.sidebar.error(f"Failed to bind bedrock {exc}")
+# ==========================================
+# 3. Sidebar: Architecture Telemetry (No Key Prompts!)
+# ==========================================
+st.sidebar.title("System Control")
+
+provider_selection = st.sidebar.radio(
+    "Active Model Provider:",
+    #options=["AWS Bedrock (Claude 3.5 Sonnet)", "Groq LPU (Llama 3.1)"],
+    options=["AWS Bedrock (Claude 3.5 Sonnet)"],
+    index=0
+)
+
+target_provider = "bedrock" if "Bedrock" in provider_selection else "groq"
+engine.configure_llm(provider=target_provider)
+
+# if engine.current_provider != target_provider:
+#     try:
+#         with st.sidebar.status("Swapping inference engine", expanded=False):
+#             engine.configure_llm(provider=target_provider)
+#         st.sidebar.status(f"Successfully swapped to {target_provider.upper()} engine.")
+#     except Exception as exc:
+#         st.sidebar.status(f"Failed to switch provider: {exc}")
+
+# user_access_key = os.getenv("AWS_ACCESS_KEY_ID")
+# user_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+# user_region = "ap-south-1"
+# access_key = user_access_key.strip()
+# secret_access_key = user_secret_access_key.strip()
+
+# try:
+#     # user_credentials = UserAWSCredentials(access_key_id=user_access_key, secret_access_key=user_secret_access_key, session_token=user_token, region_name=user_region)
+#     user_credentials = UserAWSCredentials(access_key_id=access_key, secret_access_key=secret_access_key,
+#                                           region_name=user_region)
+#     # print(user_credentials)
+#     if engine.current_provider != "bedrock" or not engine.is_ready:
+#         with st.sidebar.status("Binding bedrock claude...", expanded=False):
+#             #engine.configure_llm(provider="bedrock", aws_credentials=user_credentials)
+#             engine.configure_llm(provider="bedrock")
+#     st.sidebar.success("Powered by claude.")
+# except Exception as exc:
+#     st.sidebar.error(f"Failed to bind bedrock {exc}")
+
 
 # ==========================================
 # 4. Session State & History Transcript

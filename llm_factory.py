@@ -18,7 +18,7 @@ from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
 from openai.providers import bedrock
 from requests import session
-from torch.autograd.profiler_legacy import profile
+from config import get_bedrock_settings
 
 env_path = Path(".")/".env"
 load_dotenv(dotenv_path=env_path)
@@ -49,14 +49,15 @@ class LLMFactory:
 
     # --- config ---
     REGION = "ap-south-1"
-    MODEL_ID = "arn:aws:bedrock:ap-south-1:015615541381:application-inference-profile/94adswem4l7c"
-    PROVIDER = "anthropic"
-    BASE_MODEL_ID = "global.anthropic.claude-sonnet-4-6"
-    ACCOUNT_ID = "015615541381"
-    TEAM = "enterprisesolution"
-    PROFILE_NAME = f"team-{TEAM}-claude-sonnet"
+    MODEL_ID = ""
+    PROVIDER = ""
+    BASE_MODEL_ID = ""
+    ACCOUNT_ID = ""
+    TEAM = ""
     GUARDRAIL_ID = "z8r83pgj0a1s"
     GUARDRAIL_VERSION = "1"
+
+    PROFILE_NAME = f"team-{TEAM}-claude-sonnet"
     GUARDRAIL_ARN = f"arn:aws:bedrock:{REGION}:{ACCOUNT_ID}:guardrail/{GUARDRAIL_ID}"
     # Keep in sync with your DynamoDB PRICE item (USD per 1K tokens)
     PRICE_IN_PER_1K = 0.0033
@@ -87,9 +88,7 @@ class LLMFactory:
         return None
 
     @classmethod
-    def get_llm(cls, provider: str = 'bedrock', model_name: Optional[str]=None, temperature: float =0.0,
-                aws_credentials: Optional[UserAWSCredentials] = None, guardrail_id: Optional[str] = "z8r83pgj0a1s",
-                guardrail_version: Optional[str]="1") -> BaseChatModel:
+    def get_llm(cls, provider: str = 'bedrock', model_name: Optional[str]=None, temperature: float =0.0) -> BaseChatModel:
         """
             Dynamically provisions an LLM client based on environment configurations.
             Returns a unified BaseChatModel object to ensure strict interface compatibility.
@@ -99,6 +98,7 @@ class LLMFactory:
         # 2. Anthropic Provider (Claude Engine)
         # -------------------------------------------------------------
         if provider.lower().strip() in {"bedrock", "aws", "claud-aws"}:
+            settings = get_bedrock_settings()
             try:
                 import boto3
                 from botocore.config import Config
@@ -106,11 +106,11 @@ class LLMFactory:
             except ModuleNotFoundError as exc:
                 raise ImportError(f"Missing AWS runtime package: {exc.name}") from exc
 
-            if aws_credentials is None:
-                raise ValueError("AWS credentials must be explicitly provided by the user at runtime.")
-
-
-            aws_credentials.validate()
+            # if aws_credentials is None:
+            #     raise ValueError("AWS credentials must be explicitly provided by the user at runtime.")
+            #
+            #
+            # aws_credentials.validate()
 
             # bedrock_config = Config(
             #     connect_timeout=10,
@@ -119,13 +119,13 @@ class LLMFactory:
             # )
 
             session_kwarg = {
-                "aws_access_key_id": aws_credentials.access_key_id,
-                "aws_secret_access_key": aws_credentials.secret_access_key,
-                "region_name":aws_credentials.region_name
+                "aws_access_key_id": settings.access_key_id,
+                "aws_secret_access_key": settings.secret_access_key,
+                "region_name": settings.region
             }
 
-            if aws_credentials.session_token:
-                session_kwarg["aws_session_token"] = aws_credentials.session_token
+            if settings.session_token:
+                session_kwarg["aws_session_token"] = settings.session_token
 
             # Step A: Initialize the session
             boto_session = boto3.Session(**session_kwarg)
@@ -139,13 +139,13 @@ class LLMFactory:
 
             runtime_client = boto_session.client(
                 service_name="bedrock-runtime",
-                region_name=aws_credentials.region_name.strip(),
+                region_name=settings.region.strip(),
                 config=cls.BEDROCK_CONFIG
             )
 
             guardrail_config = {
-                "guardrailIdentifier": cls.GUARDRAIL_ID,
-                "guardrailVersion": cls.GUARDRAIL_VERSION
+                "guardrailIdentifier": settings.guardrail_id,
+                "guardrailVersion": settings.guardrail_version
             }
 
             # return ChatBedrockConverse(
@@ -166,21 +166,19 @@ class LLMFactory:
             #     guardrail_config=guardrail_config
             # )
            # print(cls.MODEL_ID, cls.PROVIDER, cls.BASE_MODEL_ID)
+
             return ChatBedrockConverse(
                 client=runtime_client,
-                model_id=cls.MODEL_ID,
-                provider=cls.PROVIDER,
-                base_model_id=cls.BASE_MODEL_ID,
-                temperature = temperature,
+                model_id=settings.profile_arn,
+                provider=settings.provider,
+                base_model_id=settings.base_model_id,
+                temperature=temperature,
                 max_tokens=1024,
                 guardrail_config=guardrail_config
             )
 
         elif provider.lower().strip() == 'groq':
             api_key = os.getenv("GROQ_API_KEY")
-
-
-
             if not api_key:
                 try:
                     import streamlit as st

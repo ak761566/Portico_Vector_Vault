@@ -201,7 +201,8 @@ class RAGEngine:
 
     def configure_llm(self, provider: str, model_name: Optional[str] = None, aws_credentials: Optional[UserAWSCredentials] = None) -> None:
         self.current_provider = provider
-        self.llm = LLMFactory.get_llm(provider=self.current_provider, model_name=model_name, aws_credentials=aws_credentials)
+        #self.llm = LLMFactory.get_llm(provider=self.current_provider, model_name=model_name, aws_credentials=aws_credentials)
+        self.llm = LLMFactory.get_llm(provider=self.current_provider, model_name=model_name)
 
         # Define the standalone question sub-chain
         #self.question_generator = self.re_write_prompt | self.llm | StrOutputParser()
