@@ -86,7 +86,15 @@ provider_selection = st.sidebar.radio(
 )
 
 target_provider = "bedrock" if "Bedrock" in provider_selection else "groq"
-engine.configure_llm(provider=target_provider)
+#engine.configure_llm(provider=target_provider)
+
+if engine.current_provider != target_provider:
+    try:
+        st.sidebar.status("Swapping inference_provider...", expanded=False)
+        engine.configure_llm(provider=target_provider)
+        st.sidebar.success(f"Swapped to {target_provider.upper()} engine.")
+    except Exception as exc:
+        st.sidebar.error(f"Failed to swap provider {exc}")
 
 # if engine.current_provider != target_provider:
 #     try:
@@ -166,10 +174,29 @@ if user_query := st.chat_input("Ask Ithaka (Portico) project related questions."
             # Remove cursor block once streaming concludes
             response_placeholder.markdown(full_response)
 
+            # Enforce clean memory state: Reject refusals, guardrail triggers, and template commentary
+            refusal_signature = (
+                "This query is outside the scope",
+                "I notice that your message appears",
+                "It look like you may have accidentally",
+                "Its look like you have pasted"
+            )
+
+            is_clean_turn = (
+                bool(user_query.strip())
+                and bool(full_response.strip())
+                and not any(full_response.startswith(sig) for sig in refusal_signature)
+            )
+
             # 6. Commit the current turn to persistent memory state
-            if user_query.strip() and full_response.strip() and not full_response.startswith("This query is outside the scope"):
+            # if user_query.strip() and full_response.strip() and not full_response.startswith("This query is outside the scope"):
+            #     st.session_state.chat_history.append(HumanMessage(content=user_query.strip()))
+            #     st.session_state.chat_history.append(AIMessage(content=full_response.strip()))
+            if is_clean_turn:
                 st.session_state.chat_history.append(HumanMessage(content=user_query.strip()))
                 st.session_state.chat_history.append(AIMessage(content=full_response.strip()))
+            else:
+                print("[State Guard] suppressed toxic turn from persisting in chat history")
         except Exception as e:
             response_placeholder.empty()
             st.error(f"An execution error occurred: {str(e)}")

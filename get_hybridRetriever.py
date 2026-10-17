@@ -34,12 +34,12 @@ class CustomHybridRetriever(Runnable):
 
         for rank, doc in enumerate(faiss_result, start=1):
             content = doc.page_content
-            rrf_scores[content] += 1.0 / (self.rrf_constant) + rank
+            rrf_scores[content] += 1.0 / (self.rrf_constant + rank)
             doc_lookup[content] = doc
 
         for rank, doc in enumerate(bm25_result, start=1):
             content = doc.page_content
-            rrf_scores[content] += 1.0 / (self.rrf_constant) + rank
+            rrf_scores[content] += 1.0 / (self.rrf_constant  + rank)
             doc_lookup[content] = doc
 
             # 3. Sort by fused score descending - O(N log N) where N <= 30

@@ -1,44 +1,30 @@
 from pathlib import Path
 from ingestion import DocumentProcessor
 from vector_store import VectorStoreManager
+from rag_engine import RAGEngine
 
-if __name__ == "__main__":
-    # 1. Process the files
-    docs_dir = Path('./source_docs')
-    processor = DocumentProcessor()
-    chunks = processor.process_directory(docs_dir)
-    #print(chunks)
-    # Document(metadata={'source': 'source_docs\\1. Core Preservation Pillars (Requi.txt'},
-    #          page_content='1. Core Preservation Pillars (Requirements)\nTo maintain certification as a Trusted Digital'
-    #                       ' Repository (TDR), the system must satisfy four non-negotiable requirements for every archival '
-    #                       'unit:\n•\tUsability: Content must remain readable despite software/hardware '
-    #                       'evolution (mitigating file obsolescence).\n•\tAuthenticity: '
-    #                       'A permanent, verifiable audit trail must exist for every file from ingestion through storage.'
-    #                       '\n•\tDiscoverability: High-precision metadata indexing '
-    #                       'using standardized identifiers (DOI, ISSN, ISBN).'),
+engine = RAGEngine(default_provider="bedrock")
 
-    dinesh_docs = [docs for docs in chunks if "dinesh" in docs.page_content.lower()]
-    print(f"[*] Length of dinesh docs {len(dinesh_docs)}")
+test_query = "List all workbench errors recorded by the developer Dinesh Singh across all streams"
 
-    if not dinesh_docs:
-        print("Critical: Dinesh Singh does not exist in source docs")
-    else:
-        print(f"[*] Sample match {dinesh_docs[0].page_content[:200]}")
+retrieved_docs = engine.retriever.invoke(test_query)
+print(f"Total chunks retrieved by the retriever {len(retrieved_docs)}")
+#print(retrieved_docs)
 
-    if chunks:
-        # 2. Build the vector database
-        v_manager = VectorStoreManager()
-        v_manager.build_and_save_index(chunks)
+# 1. Inspect what the retriever actually pulled
+for idx, doc in enumerate(retrieved_docs, start=1):
+    owner = doc.metadata.get("error_code", "N/A")
+    sheet = doc.metadata.get("sheet", "N/A")
+    print(f"[{idx}] Sheet {sheet} | Code {owner} | content_snippet {doc.page_content[0:60]}...")
 
-        # 3. Test a mock retrieval query
-        #retriever = v_manager.get_retriever(search_k=2)
-        retriever = v_manager.get_hybrid_retriever(chunks, vector_k=15, bm25_k=15)
-        # Type a query that matches something inside your sample Excel rows!
-        test_query = "List all workbench errors recorded by the developer Dinesh Singh across all streams"
-        result = retriever.invoke(test_query)
-        print(f"\n Search Complete. Retrieved {len(result)} relevant entries")
-        for idx, doc in enumerate(result):
-            matches_name = "dinesh" in doc.page_content.lower()
-            print(f"\n[Chunk {idx + 1}] [Contain dinesh: {matches_name}]")
-            #print(f"Content Summary:\n{doc.page_content}")
 
+# 2. Inspect formatted context
+formatted_context = engine._format_docs(retrieved_docs)
+print(f"Formated context size {len(formatted_context)} character.")
+
+# 3. Test generation directly
+print("\n Invoking LLM")
+response = engine.chain.invoke({"question":test_query, "chat_history":[]})
+print("\n" + "=" * 60)
+print(response)
+print("=" * 60)
