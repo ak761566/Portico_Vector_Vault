@@ -60,7 +60,7 @@ class VectorStoreManager:
 
         return vector_db.as_retriever(search_kwarg={"k":search_k})
 
-    def get_hybrid_retriever(self, all_docs: List[Document], vector_k: int=15, bm25_k: int=15, final_top_k: int=20)->Runnable:
+    def get_hybrid_retriever(self, all_docs: List[Document], vector_k: int=30, bm25_k: int=30, final_top_k: int=30)->Runnable:
         if not Path(self.index_path):
             raise FileNotFoundError(f"Vector index path not found. Run build_and_save_index first.")
 
