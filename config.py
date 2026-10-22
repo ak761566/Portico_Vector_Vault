@@ -38,15 +38,15 @@ def _load_env_file(dotenv_path: Path = Path(".env"))->None:
 
 def get_bedrock_settings() -> BedrockSetting:
     _load_env_file()
-    region = os.getenv("AWS_DEFAULT_REGION").strip()
-    profile_arn = os.getenv("MODEL_ID").strip()
-    base_mode_id = os.getenv("BASE_MODEL_ID").strip()
-    provider = os.getenv("PROVIDER").strip()
-    guardrail_id = os.getenv("BEDROCK_GUARDRAIL_ID").strip()
-    guardrail_version = os.getenv("BEDROCK_GUARDRAIL_VERSION").strip()
-    access_key_id = os.getenv("AWS_ACCESS_KEY_ID").strip()
-    secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY").strip()
-    session_token = os.getenv("AWS_SESSION_TOKEN").strip()
+    region = os.getenv("AWS_DEFAULT_REGION", "").strip()
+    profile_arn = os.getenv("MODEL_ID", "").strip()
+    base_mode_id = os.getenv("BASE_MODEL_ID", "").strip()
+    provider = os.getenv("PROVIDER", "").strip()
+    guardrail_id = os.getenv("BEDROCK_GUARDRAIL_ID","").strip()
+    guardrail_version = os.getenv("BEDROCK_GUARDRAIL_VERSION","").strip()
+    access_key_id = os.getenv("AWS_ACCESS_KEY_ID","").strip()
+    secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY","").strip()
+    session_token = os.getenv("AWS_SESSION_TOKEN","").strip()
 
     return BedrockSetting(region=region,
                           profile_arn=profile_arn,

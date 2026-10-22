@@ -12,7 +12,7 @@ from langchain_core.runnables.utils import Input, Output
 
 
 class CustomHybridRetriever(Runnable):
-    def __init__(self, faiss_retriever, bm25_retriever, top_k: int=10, rrf_constant: int=60):
+    def __init__(self, faiss_retriever, bm25_retriever, top_k: int=30, rrf_constant: int=60):
         self.faiss_retriever = faiss_retriever
         self.bm25_retriever = bm25_retriever
         self.top_k = top_k

@@ -85,6 +85,8 @@ provider_selection = st.sidebar.radio(
     index=0
 )
 
+st.sidebar.button("Clear Chat", on_click=lambda:st.session_state.clear())
+
 target_provider = "bedrock" if "Bedrock" in provider_selection else "groq"
 #engine.configure_llm(provider=target_provider)
 

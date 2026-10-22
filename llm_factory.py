@@ -1,23 +1,15 @@
 import os
-from dataclasses import dataclass
-from typing import Optional
-import boto3
-from boto3 import client
 from botocore.config import Config
 
 from pathlib import Path
 from dotenv import load_dotenv
 from typing import Optional
 
-from langchain_community.llms.bedrock import Bedrock
-from langchain_community.llms.ollama import Ollama
 from dataclasses import dataclass
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_groq import ChatGroq
 from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
-from openai.providers import bedrock
-from requests import session
 from config import get_bedrock_settings
 
 env_path = Path(".")/".env"

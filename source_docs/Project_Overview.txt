@@ -7,9 +7,10 @@ document_type: Client Overview & SLAs
 ---------------------------------------
 
 ## Architecture Guidelines - ITHAKA
-**Source:** [Architecture Guidelines] (https://innodata-eng.atlassian.net/wiki/spaces/EAI/pages/83230805/Project Overview - ITHAKA)
-**Source:** [Architecture Guidelines] (https://innodata-eng.atlassian.net/wiki/spaces/EAI/pages/87163079/Ithaka - Maintenance Stream Process Guide)
-
+**Source 1:** [Architecture Guidelines] (https://innodata-eng.atlassian.net/wiki/spaces/EAI/pages/83230805/Project Overview - ITHAKA)
+**Source 2:** [Architecture Guidelines] (https://innodata-eng.atlassian.net/wiki/spaces/EAI/pages/87163079/Ithaka - Maintenance Stream Process Guide)
+**Source 3:** [Architecture Guidelines] (https://innodata-eng.atlassian.net/wiki/spaces/EAI/pages/87064827/Submission Profile)
+**Source 4:** [Architecture Guidelines]  (https://innodata-eng.atlassian.net/wiki/spaces/EAI/pages/87097459/Loder Profile Loder Config Properties File)
 
 ## Project Overview
 

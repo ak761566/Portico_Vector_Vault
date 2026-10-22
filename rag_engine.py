@@ -57,7 +57,7 @@ class RAGEngine:
         self.processor = DocumentProcessor()
         self.vector_manager = VectorStoreManager()
         self.raw_docs = self.processor.process_directory(Path("./source_docs"))
-        self.retriever = self.vector_manager.get_hybrid_retriever(self.raw_docs, vector_k=15, bm25_k=15)
+        self.retriever = self.vector_manager.get_hybrid_retriever(self.raw_docs, vector_k=30, bm25_k=30, final_top_k=30)
         #self.retriever = self.vector_manager.get_retriever(search_k=20)
 
         # 2. Compile static prompts
@@ -316,7 +316,7 @@ class RAGEngine:
             escaped_content = saxutils.escape(doc.page_content.strip())
             source = saxutils.escape(str(doc.metadata.get("source", "unknown")))
             xml_chunks.append(
-                f'<record index="{idx}" source={source}>{escaped_content}</record>'
+                f'<record index="{idx}" source="{source}">{escaped_content}</record>'
             )
 
         return "\n".join(xml_chunks)
@@ -351,7 +351,7 @@ class RAGEngine:
 
             # Defensive check: if the query is already an independent complete sentence, skip rewriting
             pronouns = {"it", "this", "that", "these", "those", "he", "she", "they", "them", "previous", "earlier"}
-            query_tokens = set(re.findall(f"\b\w+\b", raw_q.lower()))
+            query_tokens = set(re.findall(r"\b\w+\b", raw_q.lower()))
 
             if not (pronouns & query_tokens) and len(raw_q.strip())>4:
                 print(f"[Query Transformer] Standalone query detected. Bypassing rewriter: '{raw_q}'")
